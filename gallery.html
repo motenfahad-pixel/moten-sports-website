@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+    <link rel="icon" href="/assets/favicon/favicon.ico">
+
+    <!-- Apple / iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
+
+    <!-- Android / PWA -->
+    <link rel="manifest" href="/assets/favicon/site.webmanifest">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Gallery | MDS – Moten Sports Construction</title>
+    <meta name="description" content="View our completed sports construction projects across Pakistan including padel courts, futsal facilities, basketball courts and more.">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body data-page="gallery">
+    <div id="site-header"></div>
+
+    <!-- Gallery Hero -->
+ <section class="page-hero">
+        <div class="hero-inner">
+            <h1>Project Gallery</h1>
+            <p class="hero-subtitle">Browse our completed projects across Pakistan</p>
+        </div>
+    </section>
+
+    <!-- Gallery Slideshow -->
+    <section class="section">
+        <div class="gallery-slideshow-container">
+            <!-- Category Filters -->
+            <div class="category-filters" id="category-filters">
+                <button class="category-btn active" data-category="all">All Projects</button>
+                <button class="category-btn" data-category="padel">Padel Courts</button>
+                <button class="category-btn" data-category="futsal">Futsal Courts</button>
+                <button class="category-btn" data-category="basketball">Basketball</button>
+                <button class="category-btn" data-category="pickleball">Pickleball</button>
+                <button class="category-btn" data-category="other">Other Sports</button>
+            </div>
+            
+            <!-- Main Slideshow -->
+            <div class="main-slide" id="main-slide">
+                <img id="current-slide-img" src="" alt="">
+                <div class="slide-info">
+                    <h3 id="current-slide-title">Loading...</h3>
+                    <p id="current-slide-desc"></p>
+                </div>
+            </div>
+            
+            <!-- Slideshow Controls -->
+            <div class="slideshow-controls">
+                <button class="slideshow-btn" id="prev-slide">←</button>
+                <div class="slide-counter">
+                    <span id="current-slide-number">1</span> / <span id="total-slides">0</span>
+                </div>
+                <button class="slideshow-btn" id="next-slide">→</button>
+            </div>
+            
+            <!-- Thumbnail Grid -->
+            <div class="thumbnail-grid" id="thumbnail-grid">
+                <!-- Thumbnails will be loaded here -->
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="load-more-container" id="load-more-container" style="display: none;">
+                <button class="load-more-btn" id="load-more-btn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Load More Projects</span>
+                </button>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="slideshow-nav" style="margin-top: 30px; justify-content: center;">
+                <button class="slideshow-btn" id="play-pause" title="Play/Pause">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+            <div class="centered-cta">
+        <a href="#quote" class="cta-button modal-trigger" data-modal="quoteModal">
+            Request Project Consultation →
+        </a>
+        
+        </div>
+        </div>
+    </section>
+
+    <div id="site-footer"></div>
+    <div id="site-modals"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+    // Gallery Slideshow Script with Lazy Loading
+    document.addEventListener('DOMContentLoaded', function() {
+        let allProjects = [];
+        let filteredProjects = [];
+        let currentSlide = 0;
+        let slideshowInterval = null;
+        let isPlaying = false;
+        let currentBatch = 0;
+        const BATCH_SIZE = 10; // Load 10 images at a time
+        const SLIDESHOW_SPEED = 4000; // 4 seconds per slide
+        
+        // DOM Elements
+        const mainSlideImg = document.getElementById('current-slide-img');
+        const mainSlideTitle = document.getElementById('current-slide-title');
+        const mainSlideDesc = document.getElementById('current-slide-desc');
+        const currentSlideNumber = document.getElementById('current-slide-number');
+        const totalSlides = document.getElementById('total-slides');
+        const thumbnailGrid = document.getElementById('thumbnail-grid');
+        const prevBtn = document.getElementById('prev-slide');
+        const nextBtn = document.getElementById('next-slide');
+        const playPauseBtn = document.getElementById('play-pause');
+        const categoryFilters = document.getElementById('category-filters');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const loadMoreContainer = document.getElementById('load-more-container');
+        
+        // Load projects
+        loadProjects();
+        
+        // Event Listeners
+        prevBtn.addEventListener('click', showPrevSlide);
+        nextBtn.addEventListener('click', showNextSlide);
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        loadMoreBtn.addEventListener('click', loadMoreProjects);
+        
+        // Category filter listeners
+        categoryFilters.addEventListener('click', function(e) {
+            if (e.target.classList.contains('category-btn')) {
+                // Update active button
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                // Filter projects
+                const category = e.target.getAttribute('data-category');
+                filterProjects(category);
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') showPrevSlide();
+            if (e.key === 'ArrowRight') showNextSlide();
+            if (e.key === ' ') {
+                e.preventDefault();
+                togglePlayPause();
+            }
+        });
+        
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        async function loadProjects() {
+            try {
+                const response = await fetch('load-portfolio.php?all=true');
+                const data = await response.json();
+                
+                if (data.success && data.projects.length > 0) {
+                    // Shuffle projects for freshness
+                    allProjects = shuffleArray(data.projects);
+                    filteredProjects = [...allProjects];
+                    currentBatch = 0;
+                    initSlideshow();
+                    loadThumbnailBatch();
+                    startSlideshow();
+                } else {
+                    loadFallbackProjects();
+                }
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                loadFallbackProjects();
+            }
+        }
+        
+        function loadFallbackProjects() {
+            allProjects = [
+                {
+                    image: 'assets/images/projects/propadel.webp',
+                    title: 'Premium MONDO Padel Court',
+                    location: 'Karachi',
+                    type: 'Padel Court'
+                },
+                {
+                    image: 'assets/images/projects/vamos (5).jpg',
+                    title: 'Vamos Padel Club',
+                    location: 'Karachi',
+                    type: 'Padel Court'
+                },
+                {
+                    image: 'assets/images/projects/sitara villas 2.jpg',
+                    title: 'Sitara Villas Sports Complex',
+                    location: 'Lahore',
+                    type: 'Multi-Sport'
+                },
+                {
+                    image: 'assets/images/projects/alpha.jpg',
+                    title: 'Alpha Sports Facility',
+                    location: 'Islamabad',
+                    type: 'Sports Facility'
+                },
+                {
+                    image: 'assets/images/projects/football (6).jpg',
+                    title: 'Futsal Arena',
+                    location: 'Karachi',
+                    type: 'Futsal Court'
+                },
+                {
+                    image: 'assets/images/projects/pb (6).jpg',
+                    title: 'Pickleball Court',
+                    location: 'Lahore',
+                    type: 'Pickleball Court'
+                }
+            ];
+            
+            // Shuffle fallback projects too
+            allProjects = shuffleArray(allProjects);
+            filteredProjects = [...allProjects];
+            currentBatch = 0;
+            initSlideshow();
+            loadThumbnailBatch();
+            startSlideshow();
+        }
+        
+        function detectCategory(project) {
+            const lowerTitle = project.title.toLowerCase();
+            const lowerType = project.type ? project.type.toLowerCase() : '';
+            
+            if (lowerTitle.includes('padel') || lowerType.includes('padel')) return 'padel';
+            if (lowerTitle.includes('futsal') || lowerTitle.includes('football') || lowerType.includes('futsal')) return 'futsal';
+            if (lowerTitle.includes('basketball') || lowerType.includes('basketball')) return 'basketball';
+            if (lowerTitle.includes('pickleball') || lowerType.includes('pickleball')) return 'pickleball';
+            return 'other';
+        }
+        
+        function filterProjects(category) {
+            if (category === 'all') {
+                filteredProjects = [...allProjects];
+            } else {
+                filteredProjects = allProjects.filter(project => {
+                    return detectCategory(project) === category;
+                });
+            }
+            
+            // Reset to first slide and batch
+            currentSlide = 0;
+            currentBatch = 0;
+            thumbnailGrid.innerHTML = '';
+            initSlideshow();
+            loadThumbnailBatch();
+        }
+        
+        function initSlideshow() {
+            if (filteredProjects.length === 0) {
+                // No projects in this category
+                mainSlideImg.src = '';
+                mainSlideTitle.textContent = 'No projects found in this category';
+                mainSlideDesc.textContent = '';
+                totalSlides.textContent = '0';
+                currentSlideNumber.textContent = '0';
+                thumbnailGrid.innerHTML = '';
+                loadMoreContainer.style.display = 'none';
+                return;
+            }
+            
+            // Update total slides
+            totalSlides.textContent = filteredProjects.length;
+            
+            // Show first slide if we have any thumbnails
+            if (filteredProjects.length > 0) {
+                goToSlide(0);
+            }
+            
+            // Show/hide load more button
+            if (filteredProjects.length > BATCH_SIZE) {
+                loadMoreContainer.style.display = 'block';
+            } else {
+                loadMoreContainer.style.display = 'none';
+            }
+        }
+        
+        function loadThumbnailBatch() {
+            if (filteredProjects.length === 0) return;
+            
+            const startIndex = currentBatch * BATCH_SIZE;
+            const endIndex = Math.min(startIndex + BATCH_SIZE, filteredProjects.length);
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                const project = filteredProjects[i];
+                
+                const thumbnail = document.createElement('div');
+                thumbnail.className = `thumbnail ${i === 0 ? 'active' : ''}`;
+                thumbnail.setAttribute('data-index', i);
+                
+                thumbnail.innerHTML = `
+                    <img src="${project.image}" alt="${project.title}" loading="lazy">
+                    <div class="thumbnail-label">${project.type || 'Project'}</div>
+                `;
+                
+                thumbnail.addEventListener('click', () => {
+                    goToSlide(i);
+                });
+                
+                // Lazy loading for images
+                const img = thumbnail.querySelector('img');
+                img.loading = 'lazy';
+                
+                thumbnailGrid.appendChild(thumbnail);
+            }
+            
+            // Update current batch
+            currentBatch++;
+            
+            // Hide load more button if all projects are loaded
+            if (endIndex >= filteredProjects.length) {
+                loadMoreContainer.style.display = 'none';
+            }
+            
+            // If this is the first batch, show first slide
+            if (startIndex === 0) {
+                goToSlide(0);
+            }
+        }
+        
+        function loadMoreProjects() {
+            loadMoreBtn.classList.add('loading');
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                loadThumbnailBatch();
+                loadMoreBtn.classList.remove('loading');
+            }, 500);
+        }
+        
+        function goToSlide(index) {
+            if (filteredProjects.length === 0) return;
+            
+            // Ensure index is within bounds
+            currentSlide = (index + filteredProjects.length) % filteredProjects.length;
+            
+            const project = filteredProjects[currentSlide];
+            
+            // Update main slide
+            mainSlideImg.src = project.image;
+            mainSlideImg.alt = project.title;
+            mainSlideTitle.textContent = project.title;
+            mainSlideDesc.textContent = `${project.location} • ${project.type || 'Sports Facility'}`;
+            
+            // Update slide counter
+            currentSlideNumber.textContent = currentSlide + 1;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === currentSlide);
+            });
+        }
+        
+        function showNextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+        
+        function showPrevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+        
+        function startSlideshow() {
+            if (slideshowInterval) clearInterval(slideshowInterval);
+            
+            slideshowInterval = setInterval(() => {
+                if (isPlaying && filteredProjects.length > 0) {
+                    showNextSlide();
+                }
+            }, SLIDESHOW_SPEED);
+            
+            isPlaying = true;
+            updatePlayPauseButton();
+        }
+        
+        function stopSlideshow() {
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = null;
+            }
+            isPlaying = false;
+            updatePlayPauseButton();
+        }
+        
+        function togglePlayPause() {
+            if (isPlaying) {
+                stopSlideshow();
+            } else {
+                startSlideshow();
+            }
+        }
+        
+        function updatePlayPauseButton() {
+            const icon = playPauseBtn.querySelector('i');
+            if (isPlaying) {
+                icon.className = 'fas fa-pause';
+                playPauseBtn.title = 'Pause Slideshow';
+            } else {
+                icon.className = 'fas fa-play';
+                playPauseBtn.title = 'Play Slideshow';
+            }
+        }
+        
+        // Auto-start slideshow on page load
+        startSlideshow();
+    });
+    </script>
+</body>
+</html>
