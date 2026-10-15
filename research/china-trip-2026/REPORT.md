@@ -49,7 +49,7 @@ We followed your rules and did not invent any exhibitor, booth, spec, price or c
 |---|---|---|---|
 | 1 | **Commercial gym package** (tender) | The largest near-term revenue, and it has a deadline. You need 2–3 serious factories with EN ISO 20957/CE files, spare-parts and warranty terms, and a quotable package. | **Ningjin factories** plus **Phase 3** (fitness), and Nantong free weights later |
 | 2 | **Athletic track: PU, EPDM, prefabricated track** | You rated it extremely important. Margins are high and good suppliers are scarce in Pakistan. You need to separate binder chemists, granule makers and system makers. | **Guangdong factories** (JRace, Tongxin, Chuanao, Like), with calls to World Athletics-listed firms in Zhejiang, Shanghai and Hebei |
-| 3 | **ScoreX ball machine OEM + ScoreX app** | It turns an imported product into a proprietary ScoreX platform. The key question is whether the factory will hand over the control protocol. | **Dongguan** (Siboasi/Skyegle, DK Sportbot) |
+| 3 | **ScoreX ball machine + ScoreX app** | It turns an imported product into a proprietary ScoreX platform. **Update 15 Oct:** your current supplier has agreed to share its Bluetooth protocol, so the main blocker is gone. The trip's job now is to (a) turn that agreement into a written licence, (b) see the supplier's factory if it is on the route, and (c) line up a second source and a padel/pickleball range. | Current supplier; **Dongguan** (Siboasi/Skyegle) as second source |
 | 4 | **ScoreX smart-court camera system** | This is the long-term platform. This trip should produce samples, an RFQ baseline and one or two partners, not a production order. | **Shenzhen**: Longhua for cameras, Nanshan for edge AI |
 | 5 | **Sports flooring** (PVC, PP tiles, rubber) | Steady contracting volume. Many good options are reachable by video call or sample. | Phase 3 halls, Shenzhen Allsports, Boker (Wuxi), Hebei FIBA-licensed makers (by call) |
 | 6 | **Padel courts and turf** | MDS already does this. The aim is to benchmark and find a second source. | Phase 3 (CityGreen), CCGrass (by call) |
@@ -230,6 +230,39 @@ Benchmarks only: Johnson Health Tech (Matrix), whose commercial cardio is mainly
 
 ## 9. ScoreX ball machines and court equipment: OEM opportunities
 
+### Update (15 Oct): your current supplier has agreed to share its Bluetooth protocol
+
+You no longer need to *find* an open supplier. The work now is to make sure the protocol you receive is complete, legally usable, and won't break when the firmware changes.
+
+**1. Get these in the protocol handover (check each one off):**
+- [ ] BLE service and characteristic UUIDs, and which ones are write, write-without-response and notify
+- [ ] Every command frame, with byte layout, value ranges and units: speed, spin (top/back), elevation, horizontal angle/oscillation, feed interval, start/stop, and drill/program upload
+- [ ] Checksum or CRC method, plus any handshake, pairing PIN or encryption
+- [ ] Responses and telemetry: acknowledgements, battery level, ball count/empty hopper, error and fault codes, firmware version
+- [ ] Which models and firmware versions the document covers, including any padel or pickleball models
+- [ ] Timing limits: minimum gap between commands, reconnect behaviour, and what the machine does if the app disconnects mid-drill
+- [ ] Their own app's behaviour as a reference (a BLE log of their app driving the machine is the fastest way to confirm the document is accurate)
+- [ ] One or two test units, ideally with the latest firmware
+
+**2. Put these in writing (a short side letter to your supply agreement is enough):**
+- [ ] A licence for ScoreX to build, publish and sell its own app that controls their machines, worldwide, at no extra fee
+- [ ] NDA in both directions (they keep your app and data private; you keep their protocol private)
+- [ ] Advance notice (e.g. 90 days) and updated documentation before any firmware change that alters the protocol, plus backward compatibility or a migration path
+- [ ] Coverage of future models, not just the current one
+- [ ] Whether you may white-label the machine (ScoreX shell, colours, logo) and the MOQ for that
+- [ ] Firmware updates: who pushes them, and whether your app may deliver OTA updates
+- [ ] Exclusivity for Pakistan (and ideally South Asia / Gulf) for the ScoreX-branded version
+- [ ] Spare parts, warranty and repair terms
+
+**3. Start now, before the trip:** have your developer build a small test app against the document and the sample machine. Any gaps found before late October can be fixed face-to-face during the trip.
+
+**What changes in the itinerary:**
+- **If your current supplier is in Guangdong (Dongguan, Shenzhen, Guangzhou):** replace or join the 30 Oct Siboasi visit with a visit to **your supplier's factory**, and sign the side letter there.
+- **If they are elsewhere in China:** keep 30 Oct for Siboasi as a **second-source and range-expansion** meeting (padel, pickleball, badminton, football), and meet your current supplier at Phase 3 if they exhibit.
+- **Samples:** you no longer need a Siboasi or Xunyun unit for protocol work. Buy one only if you want to compare hardware or add sports your current supplier doesn't cover.
+
+The rest of this section (suppliers, protocol questions) is still useful for picking a second source.
+
 | Rank | Company | Location | Sports | Smart features | Class | OEM | ScoreX fit |
 |---|---|---|---|---|---|---|---|
 | 1 | **Dongguan SIBOASI** | Dongguan | Tennis, padel*, pickleball, badminton, football, basketball, volleyball, table tennis | App, remote, AI voice (T7 Pro AI), Bluetooth (football models), smartwatch | **A** | **Stated** | **Best:** widest range, real factory, CE/RoHS/ISO 9001 claimed. S4015 about US$2,308–2,554, MOQ 1. |
@@ -387,7 +420,7 @@ Camera sub-types: **IND** = industrial or machine vision · **MOD** = OEM camera
 | **Tue 27 Oct** | Guangzhou | Car with driver, about 1.5–2 h each way to Yingde/Qingyuan [E] | **JRace factory (Yingde)** in the morning, **Chuanao factory (Qingyuan)** in the afternoon. **2 factories.** *(Swap for Phase 2 only if §20 finds ≥3 relevant exhibitors.)* | Sees binder, PU and EPDM production, not just a showroom |
 | **Wed 28 Oct** | **Ningjin, Shandong** | CAN→Jinan (TNA) about 2h45 [E] + car about 1.5 h | **DHZ** (afternoon). Possibly **MND** late. **1–2 factories.** | Gym tender: the largest strength plant in China |
 | **Thu 29 Oct** | Ningjin → Jinan | Short car hops between factories; evening drive to Jinan | **MND / MBH / Powerbody (Pilates) / Baodelong or Freeman.** **3–4 factories.** | Builds the whole gym package in one county |
-| **Fri 30 Oct** | → Dongguan → Guangzhou | TNA→SZX morning (about 2h45); SZX→Dongguan about 1 h; Humen→GZ South HSR about 25 min | **Siboasi / Skyegle** (afternoon). Buy 1 sample machine. **1–2 meetings.** | ScoreX ball-machine OEM, protocol under NDA |
+| **Fri 30 Oct** | → Dongguan → Guangzhou | TNA→SZX morning (about 2h45); SZX→Dongguan about 1 h; Humen→GZ South HSR about 25 min | **Your current ball-machine supplier** if in Guangdong (sign the protocol side letter, §9); otherwise **Siboasi / Skyegle** as second source. **1–2 meetings.** | ScoreX ball-machine OEM, protocol under NDA |
 | **Sat 31 Oct** | Guangzhou | Metro Line 8 | **Phase 3, Day 1:** sports halls (11.1, 12.1, 13.1, outdoor 9.0/13.0): CityGreen (padel/turf), sports flooring, track/EPDM exhibitors, ball machines. **8–10 booth meetings.** | Flooring, turf and padel benchmark |
 | **Sun 1 Nov** | Guangzhou | Metro | **Phase 3, Day 2:** fitness. All gym exhibitors: cardio, strength, free weights, Pilates, lockers, flooring. **10–12 meetings.** | Gym tender. Compare fair prices with the Ningjin quotes. |
 | **Mon 2 Nov** | Guangzhou → **Shenzhen (Longhua)** | Evening HSR GZ South→Shenzhen North 29–40 min [S] | **Phase 3, Day 3:** second meetings and negotiations, accessories, rackets and paddles (Jusain), samples. **6–8 meetings.** | Closing. Price-check after seeing the market. |
@@ -584,7 +617,7 @@ Use [`supplier-evaluation-template.csv`](supplier-evaluation-template.csv). Open
    - Domestic: CAN→Jinan on 28 Oct, Jinan→SZX on 30 Oct, SZX→BKK on 5 Nov.
    - Hotels: Guangzhou at Kecun or Zhujiang New Town for 26–27 Oct and 30 Oct–2 Nov; Ningjin or Dezhou for 28 Oct; Jinan for 29 Oct; Shenzhen Longhua for 2–4 Nov.
 3. **Skip Phase 2 and Yiwu.** Give **Phase 3 three days** (31 Oct–2 Nov).
-4. **Give the 28–30 Oct gap to the gym tender** (Ningjin: DHZ, MND, MBH, Powerbody) and the ball-machine OEM (Siboasi). Put the **track factories** (Tongxin, JRace, Chuanao) on 26–27 Oct.
+4. **Give the 28–30 Oct gap to the gym tender** (Ningjin: DHZ, MND, MBH, Powerbody) and the ball machines (your current supplier's factory if it is in Guangdong, otherwise Siboasi as a second source). Put the **track factories** (Tongxin, JRace, Chuanao) on 26–27 Oct.
 5. **Spend 2 days in Shenzhen after the fair** for ScoreX cameras, edge AI and PoE, then fly Shenzhen→Bangkok on 5 Nov.
 6. Add **Jiangsu (B+)** only if your existing Jiangsu factory needs a face-to-face visit now. Otherwise put it into the post-award QC trip with Nantong free weights.
 7. **Switch to Option C** if the visa is not in hand by 23 Oct, or the gym tender is cancelled.
@@ -601,7 +634,8 @@ Use [`supplier-evaluation-template.csv`](supplier-evaluation-template.csv). Open
 |---|---|---|
 | 1 | JRace, Tongxin, Chuanao, Like New Materials | Factory visit 26–27 Oct; WA/FIBA certificates; binder TDS |
 | 2 | DHZ, MND, MBH, Powerbody (+ Baodelong or Freeman) | Ningjin visits 28–29 Oct; driver/pick-up from Jinan; tender package quote |
-| 3 | Siboasi/Skyegle | Visit 30 Oct; **NDA + BLE protocol** discussion; padel model |
+| 3 | **Current ball-machine supplier** | Full protocol document + test unit **now**; side letter (licence, NDA, change notice, exclusivity) to sign on the trip; factory visit 30 Oct if they are in Guangdong (§9) |
+| 3b | Siboasi/Skyegle | Second source and padel/pickleball range; visit 30 Oct only if your current supplier is not on the route |
 | 4 | Impulse, Shuhua, Ironmaster, DL | Are you at Phase 3? If not, schedule a video call. Pakistan exclusivity status. |
 | 5 | CityGreen | Phase 3 booth number |
 | 6 | MindVision, Do3think, Sinoseen, Anpviz | Longhua meetings, 3 Nov |
@@ -614,7 +648,7 @@ Use [`supplier-evaluation-template.csv`](supplier-evaluation-template.csv). Open
 - 30×30 cm PVC sports-floor samples
 - PP tile
 - Gym rubber tile
-- 1 Siboasi machine and 1 Xunyun/Skylin machine (for app R&D)
+- 1–2 test units of your current ball machine, on the latest firmware (for app development; request before the trip)
 - 2 global-shutter USB camera modules (ELP or Sinoseen)
 - 1 Jetson or RK3588 box (Seeed or Geniatech)
 
@@ -660,7 +694,7 @@ Exact booth numbers will come from your §20 search. **We did not guess any.**
 | 27 Oct | JRace (Yingde), then Chuanao (Qingyuan) |
 | 28 Oct | DHZ (Ningjin), plus MND if time allows |
 | 29 Oct | MND or MBH, Powerbody, Baodelong or Freeman |
-| 30 Oct | Siboasi/Skyegle (Dongguan) |
+| 30 Oct | Current ball-machine supplier (if in Guangdong), otherwise Siboasi/Skyegle (Dongguan) as second source |
 
 At each factory, verify: business licence scope, the production line running, the QC lab, raw-material storage, the export packing area and the certificate originals.
 
